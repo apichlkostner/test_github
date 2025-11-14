@@ -12,11 +12,21 @@ Filesystem::~Filesystem() {
 }
 
 bool Filesystem::open(std::string_view filename) {
+    filename_ = filename;
     if (fd_ != -1) {
         ::close(fd_);
         fd_ = -1;
     }
     fd_ = ::open(filename.data(), O_RDWR | O_CREAT, 0644);
+    return fd_ != -1;
+}
+
+bool Filesystem::reopen() {
+    if (fd_ != -1) {
+        ::close(fd_);
+        fd_ = -1;
+    }
+    fd_ = ::open(filename_.data(), O_RDWR | O_CREAT, 0644);
     return fd_ != -1;
 }
 
